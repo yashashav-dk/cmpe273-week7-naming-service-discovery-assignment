@@ -1,0 +1,52 @@
+version: "3.8"
+
+services:
+  consul:
+    image: hashicorp/consul:1.17
+    ports:
+      - "8500:8500"
+      - "8600:8600/udp"
+    command: agent -server -bootstrap-expect=1 -ui -client=0.0.0.0
+    healthcheck:
+      test: ["CMD", "consul", "members"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  quote-svc-1:
+    build:
+      context: .
+      dockerfile: quote_service/Dockerfile
+    environment:
+      - INSTANCE_NAME=quote-svc-1
+      - SERVICE_PORT=5001
+      - CONSUL_HOST=consul
+    ports:
+      - "5001:5001"
+    depends_on:
+      consul:
+        condition: service_healthy
+
+  quote-svc-2:
+    build:
+      context: .
+      dockerfile: quote_service/Dockerfile
+    environment:
+      - INSTANCE_NAME=quote-svc-2
+      - SERVICE_PORT=5002
+      - CONSUL_HOST=consul
+    ports:
+      - "5002:5002"
+    depends_on:
+      consul:
+        condition: service_healthy
+
+  client:
+    build:
+      context: .
+      dockerfile: client/Dockerfile
+    environment:
+      - CONSUL_HOST=consul
+    depends_on:
+      - quote-svc-1
+      - quote-svc-2
