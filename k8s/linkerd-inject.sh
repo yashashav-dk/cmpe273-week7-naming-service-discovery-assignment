@@ -7,6 +7,8 @@ set -e
 CLUSTER_NAME="quote-mesh"
 
 echo "=== Step 1: Create k3d cluster ==="
+# Delete existing cluster if it exists
+k3d cluster delete $CLUSTER_NAME 2>/dev/null || true
 k3d cluster create $CLUSTER_NAME --wait
 
 echo "=== Step 2: Build and import Docker image ==="
