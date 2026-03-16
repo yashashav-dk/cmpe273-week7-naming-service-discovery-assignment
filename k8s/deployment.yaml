@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quote-svc-1
+  labels:
+    app: quote-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: quote-service
+      instance: quote-svc-1
+  template:
+    metadata:
+      labels:
+        app: quote-service
+        instance: quote-svc-1
+      annotations:
+        linkerd.io/inject: enabled
+    spec:
+      containers:
+        - name: quote-service
+          image: quote-service:local
+          imagePullPolicy: Never
+          env:
+            - name: INSTANCE_NAME
+              value: "quote-svc-1"
+            - name: SERVICE_PORT
+              value: "5001"
+            - name: CONSUL_HOST
+              value: "consul"
+          ports:
+            - containerPort: 5001
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quote-svc-2
+  labels:
+    app: quote-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: quote-service
+      instance: quote-svc-2
+  template:
+    metadata:
+      labels:
+        app: quote-service
+        instance: quote-svc-2
+      annotations:
+        linkerd.io/inject: enabled
+    spec:
+      containers:
+        - name: quote-service
+          image: quote-service:local
+          imagePullPolicy: Never
+          env:
+            - name: INSTANCE_NAME
+              value: "quote-svc-2"
+            - name: SERVICE_PORT
+              value: "5001"
+            - name: CONSUL_HOST
+              value: "consul"
+          ports:
+            - containerPort: 5001
