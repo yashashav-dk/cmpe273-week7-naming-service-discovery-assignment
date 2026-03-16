@@ -71,6 +71,10 @@ curl http://localhost:5002/quote
 docker compose down
 ```
 
+### Consul UI — Service Registry
+
+![Consul UI showing 2 healthy quote-service instances](docs/images/consul-ui-healthy-instances.png)
+
 ### Expected Client Output
 
 ```
@@ -124,6 +128,10 @@ kubectl port-forward svc/consul 8500:8500
 # Clean up
 k3d cluster delete quote-mesh
 ```
+
+### Linkerd Dashboard — Mesh Metrics
+
+![Linkerd Viz dashboard showing meshed deployments with HTTP and TCP metrics](docs/images/linkerd-dashboard-deployments.png)
 
 ### Service Mesh Benefits Demonstrated
 
