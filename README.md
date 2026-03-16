@@ -186,29 +186,39 @@ Health check endpoint used by Consul.
 
 ## Service Discovery Flow
 
-```
-┌──────────┐         ┌──────────────┐         ┌──────────────┐
-│  Client   │         │   Consul     │         │ Quote Svc 1  │
-│           │         │  (Registry)  │         │  (Flask)     │
-└─────┬─────┘         └──────┬───────┘         └──────┬───────┘
-      │                      │                        │
-      │   GET /v1/health/    │                        │
-      │   service/quote-svc  │                        │
-      │─────────────────────>│                        │
-      │                      │                        │
-      │  [quote-svc-1:5001,  │                        │
-      │   quote-svc-2:5002]  │                        │
-      │<─────────────────────│                        │
-      │                      │                        │
-      │  (pick random)       │                        │
-      │                      │                        │
-      │  GET /quote          │                        │
-      │───────────────────────────────────────────────>│
-      │                      │                        │
-      │  {"quote": "...",    │                        │
-      │   "instance": "..."}│                        │
-      │<───────────────────────────────────────────────│
-      │                      │                        │
+```mermaid
+sequenceDiagram
+    participant QS1 as Quote Svc 1 :5001
+    participant QS2 as Quote Svc 2 :5002
+    participant C as Consul Registry :8500
+    participant CL as Client
+
+    Note over QS1,C: Phase 1: Service Registration
+    QS1->>C: PUT /v1/agent/service/register<br/>{"Name": "quote-service", "ID": "quote-svc-1", "Port": 5001}
+    C-->>QS1: 200 OK
+    QS2->>C: PUT /v1/agent/service/register<br/>{"Name": "quote-service", "ID": "quote-svc-2", "Port": 5002}
+    C-->>QS2: 200 OK
+
+    Note over QS1,C: Phase 2: Health Checks (every 10s)
+    loop Every 10 seconds
+        C->>QS1: GET /health
+        QS1-->>C: {"status": "healthy"}
+        C->>QS2: GET /health
+        QS2-->>C: {"status": "healthy"}
+    end
+
+    Note over C,CL: Phase 3: Service Discovery
+    CL->>C: GET /v1/health/service/quote-service?passing=true
+    C-->>CL: [{"Service": {"ID": "quote-svc-1", "Port": 5001}},<br/>{"Service": {"ID": "quote-svc-2", "Port": 5002}}]
+
+    Note over CL: Pick random instance
+
+    Note over QS1,CL: Phase 4: Call Service
+    CL->>QS1: GET /quote
+    QS1-->>CL: {"quote": "Waste no more time...",<br/>"book": "Meditations, Book 10",<br/>"instance": "quote-svc-1"}
+
+    CL->>QS2: GET /quote
+    QS2-->>CL: {"quote": "The happiness of your life...",<br/>"book": "Meditations, Book 5",<br/>"instance": "quote-svc-2"}
 ```
 
 ---
