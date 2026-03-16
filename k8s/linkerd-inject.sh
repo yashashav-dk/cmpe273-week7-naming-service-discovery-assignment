@@ -17,6 +17,8 @@ k3d image import quote-service:local -c $CLUSTER_NAME
 
 echo "=== Step 3: Install Linkerd ==="
 linkerd check --pre
+# Delete conflicting k3s Gateway API CRD if present
+kubectl delete crd httproutes.gateway.networking.k8s.io 2>/dev/null || true
 linkerd install --crds | kubectl apply -f -
 linkerd install | kubectl apply -f -
 linkerd check
