@@ -270,6 +270,15 @@ tests/test_quotes.py::test_get_random_quote_returns_valid_quote PASSED
 
 ---
 
+## Demo Videos
+
+| Part | Description | Link |
+|---|---|---|
+| **Part A** | Service Discovery with Consul — Docker Compose, registration, client discovery | [Watch on Google Drive](https://drive.google.com/file/d/1YUBsDlkUbGfwaSQ1Mxop7QxScXrCUlyQ/view?usp=sharing) |
+| **Part B** | Service Mesh with Linkerd — k3d, sidecar injection, mTLS, observability dashboard | [Watch on Google Drive](https://drive.google.com/file/d/1TlakyZZWq7cP_Gdkz5zrHvjtecjtXsF5/view?usp=sharing) |
+
+---
+
 ## Key Design Decisions
 
 - **Consul HTTP API** for registration rather than a client library — keeps dependencies minimal and makes the discovery protocol explicit
