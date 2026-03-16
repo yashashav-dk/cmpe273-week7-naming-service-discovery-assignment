@@ -6,6 +6,17 @@ A Python microservice system demonstrating **service registration & discovery** 
 
 ---
 
+## Deliverables
+
+| # | Deliverable | Link |
+|---|---|---|
+| 1 | **GitHub Repo** | [yashashav-dk/cmpe273-week7-naming-service-discovery-assignment](https://github.com/yashashav-dk/cmpe273-week7-naming-service-discovery-assignment) |
+| 2 | **Architecture Diagram** | [See below](#architecture) |
+| 3 | **Demo Video — Part A** (Service Discovery with Consul) | [Watch on Google Drive](https://drive.google.com/file/d/1YUBsDlkUbGfwaSQ1Mxop7QxScXrCUlyQ/view?usp=sharing) |
+| 4 | **Demo Video — Part B** (Service Mesh with Linkerd) | [Watch on Google Drive](https://drive.google.com/file/d/1TlakyZZWq7cP_Gdkz5zrHvjtecjtXsF5/view?usp=sharing) |
+
+---
+
 ## Architecture
 
 ```mermaid
@@ -267,15 +278,6 @@ tests/test_quotes.py::test_get_random_quote_returns_valid_quote PASSED
 | Service Mesh | Linkerd + Linkerd Viz |
 | Containerization | Docker / Docker Compose |
 | Local Kubernetes | k3d |
-
----
-
-## Demo Videos
-
-| Part | Description | Link |
-|---|---|---|
-| **Part A** | Service Discovery with Consul — Docker Compose, registration, client discovery | [Watch on Google Drive](https://drive.google.com/file/d/1YUBsDlkUbGfwaSQ1Mxop7QxScXrCUlyQ/view?usp=sharing) |
-| **Part B** | Service Mesh with Linkerd — k3d, sidecar injection, mTLS, observability dashboard | [Watch on Google Drive](https://drive.google.com/file/d/1TlakyZZWq7cP_Gdkz5zrHvjtecjtXsF5/view?usp=sharing) |
 
 ---
 
