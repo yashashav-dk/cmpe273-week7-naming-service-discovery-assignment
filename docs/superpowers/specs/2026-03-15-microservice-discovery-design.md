@@ -60,19 +60,37 @@ graph TD
 
 ### 4. Linkerd Service Mesh
 
-- Control plane in Docker Compose
-- Sidecar proxies injected into quote service containers
+**Deployment strategy:** Linkerd requires Kubernetes. The core services (Consul + Flask + Client) run in Docker Compose for development. For the mesh demo, services are deployed to a local **k3d** cluster where `linkerd inject` works natively.
+
+- Linkerd control plane installed via `linkerd install | kubectl apply -f -`
+- Deployments annotated with `linkerd.io/inject: enabled` for automatic sidecar injection
+- The client runs outside the mesh (it's a CLI tool, not a long-running service)
 - Demonstrates:
   - **Traffic routing** — load balancing visible in dashboard
-  - **Observability** — request rate, success rate, latency per instance
+  - **Observability** — request rate, success rate, latency per instance via `linkerd viz dashboard`
   - **Security** — automatic mTLS between services
+
+## Configuration
+
+Environment variables per component:
+
+| Component | Variable | Example |
+|---|---|---|
+| Quote Service | `INSTANCE_NAME` | `quote-svc-1` |
+| Quote Service | `SERVICE_PORT` | `5001` |
+| Quote Service | `CONSUL_HOST` | `consul` |
+| Client | `CONSUL_HOST` | `consul` |
+
+Consul service name: `quote-service` (used in registration and discovery).
+
+The client is a consumer only — it does not register with Consul.
 
 ## Project Structure
 
 ```
 cmpe273-week7-naming-service-discovery-assignment/
 ├── README.md                  # Architecture diagram (Mermaid), setup, demo
-├── docker-compose.yml         # Consul + 2 quote services + Linkerd
+├── docker-compose.yml         # Consul + 2 quote services (core layer)
 ├── quote-service/
 │   ├── Dockerfile
 │   ├── app.py                 # Flask app with /quote and /health
@@ -82,8 +100,10 @@ cmpe273-week7-naming-service-discovery-assignment/
 ├── client/
 │   ├── client.py              # Discovery + random instance selection
 │   └── requirements.txt
-└── linkerd/
-    └── linkerd-config.yaml
+└── k8s/
+    ├── deployment.yaml        # Quote service K8s deployment (2 replicas)
+    ├── service.yaml           # K8s service definition
+    └── linkerd-inject.sh      # Script to inject Linkerd and apply manifests
 ```
 
 ## Error Handling
@@ -104,7 +124,8 @@ cmpe273-week7-naming-service-discovery-assignment/
 - Python 3.11+ / Flask
 - Consul (HashiCorp)
 - Linkerd
-- Docker / Docker Compose
+- Docker / Docker Compose (core layer)
+- k3d (local Kubernetes for Linkerd mesh layer)
 
 ## Deliverables
 
